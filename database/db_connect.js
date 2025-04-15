@@ -1,11 +1,11 @@
-// const db = require('mysql2');
+const db = require('mysql2');
 
-// const conn = db.createConnection({
-//     host: 'localhost',
-//     port: 3306,
-//     user: 'path',
-//     password: 'path',
-//     database: 'path',
-// });
+const conn = db.createConnection({
+    host: '203.231.146.220',
+    port: 3306,
+    user: '202506_cu',
+    password: '202506_cu',
+    database: '202506_cu',
+});
 
-// module.exports = conn;
+module.exports = conn;

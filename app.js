@@ -9,9 +9,9 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-// //db connect
-// const db = require('./database/db_connect');
-// db.connect();
+//db connect
+const db = require('./database/db_connect');
+db.connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
