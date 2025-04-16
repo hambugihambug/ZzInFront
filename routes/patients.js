@@ -1,0 +1,43 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../database/db_connect');
+
+// GET /api/patients - 환자 목록 조회
+router.get('/', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM patient');
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching patients:', err);
+        res.status(500).json({ error: 'Failed to fetch patients' });
+    }
+});
+
+// POST /api/patients - 환자 추가
+router.post('/', async (req, res) => {
+    const { name, age, gender, room, status, condition } = req.body;
+    try {
+        const [result] = await db.query(
+            'INSERT INTO patient (name, age, gender, room, status, condition) VALUES (?, ?, ?, ?, ?, ?)',
+            [name, age, gender, room, status, condition]
+        );
+        res.status(201).json({ id: result.insertId, ...req.body });
+    } catch (err) {
+        console.error('Error adding patient:', err);
+        res.status(500).json({ error: 'Failed to add patient' });
+    }
+});
+
+// DELETE /api/patients/:id - 환자 삭제
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('DELETE FROM patient WHERE id = ?', [id]);
+        res.status(204).send();
+    } catch (err) {
+        console.error('Error deleting patient:', err);
+        res.status(500).json({ error: 'Failed to delete patient' });
+    }
+});
+
+module.exports = router;
