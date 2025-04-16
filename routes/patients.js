@@ -15,13 +15,50 @@ router.get('/', async (req, res) => {
 
 // POST /api/patients - 환자 추가
 router.post('/', async (req, res) => {
-    const { name, age, gender, room, status, condition } = req.body;
+    const {
+        patient_name,
+        patient_age,
+        patient_height,
+        patient_weight,
+        patient_blood,
+        guardian_id,
+        bed_id,
+        patientCrte_id,
+        patientCrte_dt,
+        patientUpte_id,
+        patientUpte_dt,
+    } = req.body;
+
     try {
         const [result] = await db.query(
-            'INSERT INTO patient (name, age, gender, room, status, condition) VALUES (?, ?, ?, ?, ?, ?)',
-            [name, age, gender, room, status, condition]
+            `INSERT INTO patient (
+                patient_name,
+                patient_age,
+                patient_height,
+                patient_weight,
+                patient_blood,
+                guardian_id,
+                bed_id,
+                patientCrte_id,
+                patientCrte_dt,
+                patientUpte_id,
+                patientUpte_dt
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                patient_name,
+                patient_age,
+                patient_height,
+                patient_weight,
+                patient_blood,
+                guardian_id,
+                bed_id,
+                patientCrte_id,
+                patientCrte_dt,
+                patientUpte_id,
+                patientUpte_dt,
+            ]
         );
-        res.status(201).json({ id: result.insertId, ...req.body });
+        res.status(201).json({ patient_id: result.insertId, ...req.body });
     } catch (err) {
         console.error('Error adding patient:', err);
         res.status(500).json({ error: 'Failed to add patient' });
