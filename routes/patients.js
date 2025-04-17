@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        await db.query('DELETE FROM patient WHERE id = ?', [id]);
+        await db.query('DELETE FROM patient WHERE patient_id = ?', [id]);
         res.status(204).send();
     } catch (err) {
         console.error('Error deleting patient:', err);
