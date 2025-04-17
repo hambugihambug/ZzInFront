@@ -6,14 +6,14 @@ const db = require('../database/db_connect');
 router.get('/', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM patient');
-        res.json(rows);
+        res.json({ code: 0, data: rows });
     } catch (err) {
         console.error('Error fetching patients:', err);
-        res.status(500).json({ error: 'Failed to fetch patients' });
+        res.status(500).json({ code: 1, message: '환자 정보 조회 실패', error: err });
     }
 });
 
-// POST /api/patients - 환자 추가
+// POST /patients - 환자 추가
 router.post('/', async (req, res) => {
     const {
         patient_name,
