@@ -36,23 +36,24 @@ router.get('/stats', async (req, res) => {
     try {
         const query = `
             SELECT 
-                HOUR(accident_date) as hour,
+                FLOOR(HOUR(accident_date) / 3) * 3 as hour_start,
                 COUNT(*) as count
             FROM accident
             WHERE accident_YN = 1
-            GROUP BY HOUR(accident_date)
-            ORDER BY hour
+            GROUP BY FLOOR(HOUR(accident_date) / 3)
+            ORDER BY hour_start
         `;
 
         const [rows] = await db.query(query);
 
-        // 24시간 데이터 생성 (없는 시간대는 0으로 채움)
-        const hourlyStats = Array(24)
+        // 3시간 간격으로 8개 구간 데이터 생성 (없는 시간대는 0으로 채움)
+        const hourlyStats = Array(8)
             .fill(0)
-            .map((_, hour) => {
-                const found = rows.find((row) => row.hour === hour);
+            .map((_, index) => {
+                const hourStart = index * 3;
+                const found = rows.find((row) => row.hour_start === hourStart);
                 return {
-                    hour: hour,
+                    hour: `${hourStart}시-${hourStart + 2}시`,
                     count: found ? found.count : 0,
                 };
             });
