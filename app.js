@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var patientsRouter = require('./routes/patients');
 var roomsRouter = require('./routes/rooms'); // 병실 관련 API 라우터 추가
+var fallRouter = require('./routes/fall-incidents'); // 낙상 관련 API 라우터 추가
 
 var app = express();
 
@@ -37,6 +38,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/patients', patientsRouter);
 app.use('/rooms', roomsRouter); // 병실 관련 API 라우터 추가
+app.use('/fall-incidents', fallRouter); // 낙상 관련 API 라우터 추가
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

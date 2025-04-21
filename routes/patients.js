@@ -77,4 +77,57 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// PUT /api/patients/:id - 환자 정보 수정
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const {
+        patient_name,
+        patient_age,
+        patient_height,
+        patient_weight,
+        patient_blood,
+        guardian_id,
+        bed_id,
+        patientUpte_id,
+        patientUpte_dt,
+    } = req.body;
+
+    try {
+        const [result] = await db.query(
+            `UPDATE patient SET 
+                patient_name = ?,
+                patient_age = ?,
+                patient_height = ?,
+                patient_weight = ?,
+                patient_blood = ?,
+                guardian_id = ?,
+                bed_id = ?,
+                patientUpte_id = ?,
+                patientUpte_dt = ?
+            WHERE patient_id = ?`,
+            [
+                patient_name,
+                patient_age,
+                patient_height,
+                patient_weight,
+                patient_blood,
+                guardian_id,
+                bed_id,
+                patientUpte_id,
+                patientUpte_dt,
+                id,
+            ]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ code: 1, message: '환자 정보를 찾을 수 없습니다.' });
+        }
+
+        res.json({ code: 0, message: '환자 정보가 성공적으로 수정되었습니다.' });
+    } catch (err) {
+        console.error('Error updating patient:', err);
+        res.status(500).json({ code: 1, message: '환자 정보 수정 실패', error: err });
+    }
+});
+
 module.exports = router;
