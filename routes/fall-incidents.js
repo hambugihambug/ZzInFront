@@ -53,7 +53,7 @@ router.get('/stats', async (req, res) => {
                 const hourStart = index * 3;
                 const found = rows.find((row) => row.hour_start === hourStart);
                 return {
-                    hour: `${hourStart}시-${hourStart + 2}시`,
+                    hour: `${hourStart}시-${hourStart + 2}`,
                     count: found ? found.count : 0,
                 };
             });
