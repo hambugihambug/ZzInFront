@@ -31,4 +31,43 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /fall-incidents/stats - 시간대별 낙상 사고 통계
+router.get('/stats', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                HOUR(accident_date) as hour,
+                COUNT(*) as count
+            FROM accident
+            WHERE accident_YN = 1
+            GROUP BY HOUR(accident_date)
+            ORDER BY hour
+        `;
+
+        const [rows] = await db.query(query);
+
+        // 24시간 데이터 생성 (없는 시간대는 0으로 채움)
+        const hourlyStats = Array(24)
+            .fill(0)
+            .map((_, hour) => {
+                const found = rows.find((row) => row.hour === hour);
+                return {
+                    hour: hour,
+                    count: found ? found.count : 0,
+                };
+            });
+
+        res.json({
+            code: 0,
+            data: hourlyStats,
+        });
+    } catch (error) {
+        console.error('Error fetching fall incident stats:', error);
+        res.status(500).json({
+            code: 1,
+            message: '낙상 사고 통계를 불러오는데 실패했습니다.',
+        });
+    }
+});
+
 module.exports = router;

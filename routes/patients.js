@@ -5,13 +5,22 @@ const db = require('../database/db_connect');
 // GET /api/patients - 환자 목록 조회
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query(`
-            SELECT 
-                *,
-                TIMESTAMPDIFF(YEAR, patient_age, CURDATE()) as age
-            FROM patient
-        `);
-        res.json({ code: 0, data: rows });
+        // 환자 목록과 전체 수를 함께 조회
+        const [rows, countResult] = await Promise.all([
+            db.query(`
+                SELECT 
+                    *,
+                    TIMESTAMPDIFF(YEAR, patient_age, CURDATE()) as age
+                FROM patient
+            `),
+            db.query('SELECT COUNT(*) as total FROM patient'),
+        ]);
+
+        res.json({
+            code: 0,
+            data: rows[0],
+            totalCount: countResult[0][0].total,
+        });
     } catch (err) {
         console.error('Error fetching patients:', err);
         res.status(500).json({ code: 1, message: '환자 정보 조회 실패', error: err });
