@@ -2,18 +2,23 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db_connect');
 
-// GET /accidents - 환자 목록 조회
+// GET /accidents - 낙상 사고 목록 조회
 router.get('/', async (req, res) => {
     try {
         const query = `
             SELECT 
                 a.accident_id,
                 a.patient_id,
-                p.patient_name,    -- patient 테이블의 patient_name 컬럼
-                a.accident_date,
-                a.accident_YN
+                p.patient_name,
+                a.accident_dt as accident_date,
+                a.accident_YN,
+                b.bed_num,
+                r.room_name
             FROM accident a
-            LEFT JOIN patient p ON a.patient_id = p.patient_id  -- patient 테이블과 patient_id로 조인
+            LEFT JOIN patient p ON a.patient_id = p.patient_id
+            LEFT JOIN bed b ON p.bed_id = b.bed_id
+            LEFT JOIN room r ON b.room_id = r.room_id
+            ORDER BY a.accident_dt DESC
         `;
 
         const [rows] = await db.query(query);
@@ -36,11 +41,11 @@ router.get('/stats', async (req, res) => {
     try {
         const query = `
             SELECT 
-                FLOOR(HOUR(accident_date) / 3) * 3 as hour_start,
+                FLOOR(HOUR(accident_dt) / 3) * 3 as hour_start,
                 COUNT(*) as count
             FROM accident
-            WHERE accident_YN = 1
-            GROUP BY FLOOR(HOUR(accident_date) / 3)
+            WHERE accident_YN = 'Y'
+            GROUP BY FLOOR(HOUR(accident_dt) / 3)
             ORDER BY hour_start
         `;
 
