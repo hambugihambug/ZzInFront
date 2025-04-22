@@ -69,7 +69,7 @@ router.get('/', async (req, res) => {
                     break;
                 default:
                     weatherDesc = '알 수 없음';
-                    icon = '🌈';
+                    icon = '';
                     break;
             }
 
