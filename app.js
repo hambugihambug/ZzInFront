@@ -18,7 +18,7 @@ var app = express();
 // CORS 설정
 app.use(
     cors({
-        origin: 'http://localhost:5000', // 프론트엔드 개발 서버 주소
+        origin: 'http://localhost:5001', // 프론트엔드 개발 서버 주소
         credentials: true,
     })
 );
